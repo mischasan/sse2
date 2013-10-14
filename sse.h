@@ -26,6 +26,9 @@
 #   define regargs
 #endif
 
+// ssebmx: bit matrix transpose. nrows and ncols must be multiples of 8.
+void    ssebmx(char const *inp, char *out, int nrows, int ncols);
+
 // ssebndm: memmem, using SSE2 for patlen in [65..128]
 char   *ssebndm(char *target, int tgtlen, char *pattern, int patlen);
 

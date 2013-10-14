@@ -4,7 +4,7 @@ export sse ?= .
 #---------------- PRIVATE VARS:
 # sse.pgms: test programs requiring no args
 
-sse.c          = $(patsubst %,$(sse)/%, ssebndm.c ssesort.c ssestr.c)
+sse.c          = $(patsubst %,$(sse)/%, ssebmx.c ssebndm.c ssesort.c ssestr.c)
 sse.pgms       = $(patsubst %,$(sse)/%, ssebndm_t ssesort_t ssestr_t)
 
 #---------------- PUBLIC VARS:

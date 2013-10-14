@@ -113,7 +113,7 @@ profile         : BLD := profile
 
 %.test          : $(%.test)
 # GMAKE trims leading "./" from $*. Sigh.
-%.pass          : %         ; rm -f $@; $(*D)/$(*F) >& $*.fail && mv -f $*.fail $@
+%.pass          : %         ; rm -f $@; $(exec.$(BLD)) $(*D)/$(*F) >& $*.fail && mv -f $*.fail $@
 
 # To build a .so, "make clean" first, to ensure all .o files compiled with -fPIC
 %.so            : CFLAGS := -fPIC $(filter-out $(CFLAGS.cover) $(CFLAGS.profile), $(CFLAGS))

@@ -35,7 +35,7 @@ sserank16d(double keys[16], int rank[16])
         dist[LSB(keys[i]) & 15]++;
 
     for (i = 0; i < 15; ++i)
-        dist[(i) + 1] += dist[i];
+        dist[i + 1] += dist[i];
 
     for (i = 0; i < 16; ++i) {
         lsb[i] = LSB(keys[i]);
