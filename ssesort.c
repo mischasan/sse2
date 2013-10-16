@@ -17,7 +17,8 @@
 //
 // IF YOU ARE UNABLE TO WORK WITH GPL2, CONTACT ME.
 //-------------------------------------------------------------------
-#include "_sse.h"
+#include "sse.h"
+#include <stdint.h>
 
 //  "LSB" presumes LSB-first storage of (double).
 #define LSB(x) (*(uint8_t*)&(x))

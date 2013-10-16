@@ -1,5 +1,9 @@
+#include "sse.h"
+#include <stdint.h>
 #include <string.h>             // ffsl
-#include "_sse.h"
+
+static inline unsigned under(unsigned x)
+{ return (x - 1) & ~x; }
 
 int
 ssecmp(char const *s, char const *t)

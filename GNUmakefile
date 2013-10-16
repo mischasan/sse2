@@ -4,8 +4,8 @@ export sse ?= .
 #---------------- PRIVATE VARS:
 # sse.pgms: test programs requiring no args
 
-sse.c          = $(patsubst %,$(sse)/%, ssebmx.c ssebndm.c ssesort.c ssestr.c)
-sse.pgms       = $(patsubst %,$(sse)/%, ssebndm_t ssesort_t ssestr_t)
+sse.c          = $(patsubst %,$(sse)/%, ssebmx.c ssebndm.c ssesort.c ssestr.c sseutil.c)
+sse.pgms       = $(patsubst %,$(sse)/%, ssebndm_t ssesort_t ssestr_t sseutil_t)
 
 #---------------- PUBLIC VARS:
 sse.lib       = $(sse)/libsse.a
@@ -21,7 +21,7 @@ $(sse.lib)	: $(sse.c:c=o)
 
 $(sse)/ssebndm_t.pass : $(sse.pgms) $(sse)/words
 
-$(sse.pgms)   	: CPPFLAGS := -I$(sse) $(CPPFLAGS)
+$(sse.pgms)   	: CPPFLAGS += -I$(sse)
 $(sse.pgms)   	: $(sse.lib) $(sse)/tap.o
 
 # Include auto-generated depfiles (gcc -MMD):

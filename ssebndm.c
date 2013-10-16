@@ -20,20 +20,13 @@
 // ssebndm: Bounded non-deterministic DAWG search; a suffix shift-and algorithm.
 //  Use 32-bit or 64-bit ints for smaller patterns.
 
-#include "_sse.h"
+#include "sse.h"
+#include <stdint.h>
 
 #define INTBITS (sizeof(int)*8)
 static inline void setbit(void *v, int p)          // p in 0..255
 {
     ((int *)v)[p / INTBITS] |= 1 << (p & (INTBITS - 1));
-}
-
-// SSE2 has no 128-bit bit shift. "Manually" carry the top bit
-//  of the low (64bit) half to the bottom of the high half.
-static inline __m128i xm_shl_001(__m128i x)
-{
-    return _mm_or_si128(_mm_slli_epi64(x, 1),
-                        _mm_srli_epi64(_mm_slli_si128(x, 8), 63));
 }
 
 char   *

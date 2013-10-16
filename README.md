@@ -18,7 +18,7 @@ Check my blog. These are intended as source examples; if the comments don't cut 
 
 ssebmx     - bit-matrix transpose, where [rows,cols] are both multiples of 8.
              
-ssebndm    - BNDM equivalent to "strstr", that really rocks for patterns 65-128 bytes long, using SSE2 bit ops.
+ssebndm    - BNDM equivalent to "memmem", that really rocks for patterns 65-128 bytes long, using SSE2 bit ops.
 
 ssecmp     - SSE2 equivalent to "strcmp". This shows how to handle boundary conditions when XMM inputs
              have different (odd) alignments across 16-byte boundaries.
