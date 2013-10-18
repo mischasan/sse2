@@ -2,8 +2,8 @@
 export sse ?= .
 
 #---------------- PRIVATE VARS:
-sse.c           = $(patsubst %,$(sse)/%, ssebmx.c ssebndm.c ssesort.c ssestr.c sseutil.c)
-sse.t           = $(patsubst %,$(sse)/%, ssebndm_t ssesort_t ssestr_t sseutil_t)
+sse.c           = $(patsubst %,$(sse)/%.c, ssebmx ssebndm ssesort ssestr sseutil)
+sse.t           = $(patsubst %,$(sse)/%_t, ssebmx ssebndm ssesort ssestr sseutil)
 
 #---------------- PUBLIC VARS:
 sse.lib         = $(sse)/libsse.a
