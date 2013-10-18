@@ -6,7 +6,7 @@ Some examples of unusual SSE2 instruction uses, as discussed in my blog mischasa
 Mischa Sandberg  mischasan@gmail.com
 
 These functions are almost always faster than their libc counterparts.
-As of writing, glibc has switched to using SSE2 for "strlen" and "strchr".
+(As of writing, glibc has switched to using SSE2 for "strlen" and "strchr")
 They are hardware-dependent on SSE2, which both Intel and AMD have supported for a decade.
 Surprisingly, the string-related functions are faster than SSE 4.2 "string" operations.
 Go figure.
@@ -34,6 +34,13 @@ ssesort16d - SSE2 sort of an array of 16 doubles. If you think that's really spe
 sserank16d - Similar to ssesort16d, except that it produces a rank index: a permutation of [0..15].
              I find this makes ssesort16d actually useful, when the sort key is a double but there's more
              "value" to what you're sorting.
+
+xm_ffs,xm_fls - 128-bit equivalents of ffs/fls for ints.
+
+xm_shl,xm_shr - variable-count 128-bit shifts for XMM values.
+            See my blog post:
+              http://mischasan.wordpress.com/2013/04/07/the-c-preprocessor-not-as-cryptic-as-youd-think/
+            for an explanation of the funkier preprocessor macros.
 
 LICENSE
 -------

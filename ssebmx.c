@@ -21,6 +21,7 @@ ssebmx(char const *inp, char *out, int nrows, int ncols)
     if (rr == nrows) return;
 
     // The remainder is a block of [8 x 16n+8] bits (n >= 0).
+
     //  Do the [8 x 16] blocks:
     for (cc = 0; cc <= ncols - 16; cc += 16) {
         for (i = 0; i < 8; ++i)
