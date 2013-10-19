@@ -2,10 +2,7 @@
 #include "sse.h"
 
 //--------------|---------------------------------------------
-// MEMREF and BITMAT wrapper classes inlined for testing:
-
-typedef struct { char const *ptr; size_t len; } MEMREF;
-int     refcmp(MEMREF const a, MEMREF const b);
+// BITMAT wrapper class inlined for testing:
 
 typedef struct bitmat_s BITMAT;
 
@@ -14,11 +11,10 @@ void    bitmat_destroy(BITMAT *);
 int     bitmat_rows(BITMAT const *);
 int     bitmat_cols(BITMAT const *);
 int     bitmat_get(BITMAT const *, int row, int col);
-void    bitmat_set(BITMAT *, int row, int col, int val);
-MEMREF  bitmat_ref(BITMAT const *);
+void    bitmat_set(BITMAT *,       int row, int col, int val);
+int     bitmat_cmp(BITMAT const *, BITMAT const*);
 BITMAT *bitmat_trans(BITMAT const *);
 //--------------|---------------------------------------------
-
 void    prbm(BITMAT const *);
 void    dotest(int nrows, int ncols, int *xys);
 
@@ -26,7 +22,11 @@ int main(void)
 {
     plan_tests(5);
     setvbuf(stdout, 0, _IOLBF, 0);
-    int pts[] = { 1,3, 2,5, 4,0, 8,9, 5,20, 6,23, 10,10, 10,11, 10,12, 15,22, 13,23, -1 };
+
+    // Eleven data points inserted into each test matrix,
+    //  modulo that matrix' dimensions.
+    int pts[] = { 1,3,  2,5,  4,0,  8,9,  5,20,  6,23,  10,10,  
+                    10,11, 10,12,  15,22,  13,23,  -1  };
 
     dotest(8, 8, pts);
     dotest(8, 24, pts);
@@ -52,8 +52,7 @@ dotest(int nrows, int ncols, int *xys)
     puts("---- exp"); prbm(exp);
 
     BITMAT *act = bitmat_trans(inp);
-    int     rc = refcmp(bitmat_ref(act), bitmat_ref(exp));
-
+    int rc = bitmat_cmp(act, exp);
     ok(!rc, "trans %d x %d", nrows, ncols);
     if (rc) {
         puts("expected:");
@@ -90,32 +89,8 @@ prbm(BITMAT const *bmp)
 }
 
 //--------------|---------------------------------------------
-
-#include <string.h>             // memcmp
-
-static inline int
-intmin(int a, int b)
-{
-    return a < b ? a : b;
-}
-
-static inline int
-nilref(MEMREF const ref)
-{
-    return !ref.len && !ref.ptr;
-}
-
-int
-refcmp(MEMREF const a, MEMREF const b)
-{
-    int     rc, na = nilref(a), nb = nilref(b);
-
-    return na || nb ? na - nb
-        : (rc = memcmp(a.ptr, b.ptr, intmin(a.len, b.len))) ? rc
-        : (int)a.len - (int)b.len;
-}
-
 #include <assert.h>
+#include <string.h>             // memcmp
 
 struct bitmat_s {
     char   *data;
@@ -127,17 +102,14 @@ bitmat(int nrows, int ncols)
 {
     assert(nrows % 8 == 0 && ncols % 8 == 0);
     BITMAT *bmp = malloc(sizeof *bmp);
-
-    *bmp = (BITMAT) {
-    calloc(nrows, ncols / 8), nrows, ncols};
+    *bmp = (BITMAT) { calloc(nrows, ncols / 8), nrows, ncols};
     return bmp;
 }
 
 void
 bitmat_destroy(BITMAT * bmp)
 {
-    if (bmp)
-        free(bmp->data), free(bmp);
+    if (bmp) free(bmp->data), free(bmp);
 }
 
 int
@@ -169,11 +141,15 @@ bitmat_cols(BITMAT const *bmp)
     return bmp->ncols;
 }
 
-MEMREF
-bitmat_ref(BITMAT const *bmp)
+// bitmap_cmp: 0 if same, 1 if diff, -1 if incompatible.
+int
+bitmat_cmp(BITMAT const *a, BITMAT const*b)
 {
-    return (MEMREF) {
-    (char const *)bmp->data, bmp->nrows * bmp->ncols / 8};
+    return a == NULL || b == NULL 
+                ? -(a == NULL && b == NULL)
+         : a->nrows == b->nrows && a->ncols == b->ncols
+                ? memcmp(a->data, b->data, a->nrows * a->ncols / 8)
+         : -1;
 }
 
 BITMAT *
