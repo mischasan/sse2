@@ -20,7 +20,7 @@ int main(void)
                 bitmat_msb_first ? "MOST" : "LEAST");
         dotest( 8,  8, pts);
         dotest( 8, 24, pts);
-        dotest(16, 8, pts);
+        dotest(16, 16, pts);
         dotest(16, 24, pts);
         dotest(24, 24, pts);
     }

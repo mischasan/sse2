@@ -10,15 +10,16 @@ sse.lib         = $(sse)/libsse.a
 sse.include     = $(sse)/sse.h
 
 #---------------- PUBLIC TARGETS (see rules.mk):
-all             : $(sse.lib)
-test            : $(sse.t:%=%.pass)
+all             : sse.all
+test            : sse.test
 install         : sse.install
 
 #---------------- PRIVATE RULES:
+sse.all		: $(sse.lib)
+sse.test	: $(sse.t:%=%.pass)
+
 $(sse.lib)	: $(sse.c:c=o)
-
 $(sse)/ssebndm_t.pass : $(sse)/words
-
 # Note makefile order-dependence: this must precede "$(sse.t): $(sse.lib)"
 $(sse)/ssebmx_t	: $(sse)/bitmat.o
 
