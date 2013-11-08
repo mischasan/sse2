@@ -19,10 +19,9 @@ struct bitmat { char *data; unsigned nrows, ncols; };
 BITMAT *
 bitmat(int nrows, int ncols)
 {
-    assert(nrows % 8 == 0 && ncols % 8 == 0);
-    BITMAT *bmp = malloc(sizeof *bmp);
-    *bmp = (BITMAT) { calloc(nrows, ncols / 8), nrows, ncols};
-    return bmp;
+    assert(!(nrows % 8 ||ncols % 8));
+    BITMAT bm = { calloc(nrows, ncols / 8), nrows, ncols };
+    return memcpy(malloc(sizeof bm), &bm, sizeof bm);
 }
 
 void
@@ -60,18 +59,14 @@ bitmat_cols(BITMAT const *bmp)
     return bmp->ncols;
 }
 
-// bitmap_cmp: 0 if same, 1 if diff, -1 if incompatible.
 int
 bitmat_cmp(BITMAT const *a, BITMAT const*b)
 {
-    return a == NULL || b == NULL 
-                ? -(a == NULL && b == NULL)
-         : a->nrows == b->nrows && a->ncols == b->ncols
-                ? memcmp(a->data, b->data, a->nrows * a->ncols / 8)
-         : -1;
+    return a == b ? 0 
+        : !a || !b || a->nrows != b->nrows || a->ncols != b->ncols ? -1
+        : memcmp(a->data, b->data, a->nrows * a->ncols / 8);
 }
 
-// rowval: return ptr to start of a given rows bytes. BACK DOOR :-(
 char const*
 bitmat_rowval(BITMAT const *bmp, int row)
 {
@@ -82,7 +77,6 @@ BITMAT *
 bitmat_trans(BITMAT const *bmp)
 {
     BITMAT *ret = bitmat(bmp->ncols, bmp->nrows);
-
     (bitmat_msb_first ? ssebmx_m : ssebmx)(bmp->data, ret->data, bmp->nrows, bmp->ncols);
     return ret;
 }
