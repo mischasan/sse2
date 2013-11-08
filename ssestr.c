@@ -43,15 +43,13 @@ ssestr(char const *tgt, char const *pat)
     return tgt;
 }
 
-#define load16(p)   (*(uint16_t const*)(p))
-
 char const *
 ssechr2(char const *tgt, char const pat[2])
 {
     XMM const zero = _mm_setzero_si128();
     XMM const p0 = xm_fill(pat[0]);
     XMM const p1 = xm_fill(pat[1]);
-    uint16_t pair = load16(pat);
+    uint16_t pair = *(uint16_t const*)pat;
     unsigned f = 15 & (uintptr_t) tgt;
 
     tgt -= f;
@@ -66,7 +64,7 @@ ssechr2(char const *tgt, char const pat[2])
         if (u)
             return NULL;
         tgt += 16;
-        if (load16(tgt - 1) == pair)
+        if (*(uint16_t const*)(tgt - 1) == pair)
             return tgt - 1;
         f = 0;
     }

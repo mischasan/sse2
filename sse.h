@@ -39,11 +39,11 @@
 // xm_loud(void const*) - LOad/UnaligneD xmm value.
 // xm_zero()            - (XMM) 0x000...000
 // xm_ones()            - (XMM) 0xFFF...FFF
-// xm_f[fl]s(x)         - find first/last bit set (0..127) in an XMM value.
-//                          xm_f[fl]s(0) = -1
-// xm_shl(x,n)          - 128-bit variable shift
-// xm_shl_001(x) ... xm_shl_177(x) - optimal inline constant shifts.
 // xm_{and,andnot,not,or,xor} - standard bit ops for XMM.
+// xm_f[fl]s(x)         - find first/last bit set (0..127) in an XMM value.
+//                          xm_f[fl]s(xm_zero()) = -1
+// xm_sh[lr](x,n)          - 128-bit (left,right) variable shift
+// xm_sh[lr]_001(x) ... xm_sh[lr]_177(x) - optimal inline constant (left,right) shifts.
 
 // Format x as a string; return "buf"
 // xm_dbl(x,buf) - two doubles (lo,hi)
@@ -137,6 +137,9 @@ DO_7x7(1)       // 73..127 except 80,88,...
 // ssebmx: bit matrix transpose. nrows and ncols must be multiples of 8.
 void    ssebmx(char const *inp, char *out, int nrows, int ncols);
 
+// ssebmx_m: Same as ssebmx, but treat bytes as msbit-first.
+void    ssebmx_m(char const *inp, char *out, int nrows, int ncols);
+
 // ssebndm: memmem, using SSE2 for patlen in [65..128]
 char   *ssebndm(char *target, int tgtlen, char *pattern, int patlen);
 
@@ -156,7 +159,7 @@ void    ssesort16d(double keys[16]);
 //  such that for the input value of keys[]:
 //      keys[rank[i]] <= keys[rank[j]]  IFF  i <= j
 //  and the sort is stable; i.e.:
-//      rank[i] < rank[j] IFF i < j AND keys[rank[i]] == keys[rank[j]]
+//      rank[i] < rank[j] if < j AND keys[rank[i]] == keys[rank[j]]
 // "keys" is sorted as a side effect.
 void    sserank16d(double keys[16], int rank[16]);
 
