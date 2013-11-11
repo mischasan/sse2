@@ -15,16 +15,16 @@ test            : sse.test
 install         : sse.install
 
 #---------------- PRIVATE RULES:
-sse.all		: $(sse.lib)
-sse.test	: $(sse.t:%=%.pass)
+sse.all		      : $(sse.lib)
+sse.test	      : $(sse.t:%=%.pass)
 
-$(sse.lib)	: $(sse.c:c=o)
+$(sse.lib)	    : $(sse.c:c=o)
 $(sse)/ssebndm_t.pass : $(sse)/words
 # Note makefile order-dependence: this must precede "$(sse.t): $(sse.lib)"
 $(sse)/ssebmx_t	: $(sse)/bitmat.o
 
-$(sse.t)   	: CPPFLAGS += -I$(sse)
-$(sse.t)   	: $(sse.lib) $(sse)/tap.o
+$(sse.t)   	    : CPPFLAGS += -I$(sse)
+$(sse.t)   	    : $(sse.lib) $(sse)/tap.o
 
 $(sse)/%.[Isi] 	: CPPFLAGS += -I$(sse)
 
