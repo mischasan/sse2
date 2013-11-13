@@ -6,7 +6,8 @@ sse_modules     = ssebmx ssebndm ssesort ssestr sseutil
 sse.c           = $(sse_modules:%=$(sse)/%.c)
 sse.t           = $(sse_modules:%=$(sse)/%_t)
 
-#---------------- PUBLIC VARS (inputs to "make sse.install")
+#---------------- PUBLIC VARS:
+# Inputs to "make install":
 sse.lib         = $(sse)/libsse.a
 sse.include     = $(sse)/sse.h
 
@@ -16,14 +17,8 @@ test            : sse.test
 install         : sse.install
 
 #---------------- PRIVATE RULES:
-<<<<<<< HEAD
 sse.all         : $(sse.lib)
 sse.test        : $(sse.t:=.pass)
-
-$(sse.lib)      : $(sse.c:c=o)
-=======
-sse.all         : $(sse.lib)
-sse.test        : $(sse.t:%=%.pass)
 
 $(sse.lib)      : $(sse.c:c=o)
 $(sse)/ssebmx_t : $(sse)/bitmat.o
