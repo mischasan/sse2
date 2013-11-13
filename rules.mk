@@ -129,8 +129,7 @@ profile         : BLD := profile
 
 #---------------- TOOLS:
 # NOTE: "source" MUST be set with "=", not ":=", else MAKE recurses infinitely.
-#source          = $(filter-out %.d, $(shell ls $((MAKEFILE_LIST); $(MAKE) -nps all test cover profile | sed -n '/^. Not a target/{n;/^[^.*][^ ]*:/s/:.*//p;}' | LC_ALL=C sort -u))
-source          = $(filter-out %.d, $(shell $(MAKE) -nps all test cover profile | sed -n '/^. Not a target/{n;/^[^.*][^ ]*:/s/:.*//p;}'))
+source          = $(filter-out %.d, $(shell ls $(MAKEFILE_LIST); $(MAKE) -nps all test cover profile | sed -n '/^. Not a target/{n;/^[^.*][^ ]*:/s/:.*//p;}' | LC_ALL=C sort -u))
 
 # gccdefs : all gcc internal #defines.
 gccdefs         :;@$(CC) $(CPPFLAGS) -E -dM - </dev/null | cut -c8- | sort

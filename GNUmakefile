@@ -2,10 +2,11 @@
 export sse ?= .
 
 #---------------- PRIVATE VARS:
-sse.c           = $(patsubst %,$(sse)/%.c, ssebmx ssebndm ssesort ssestr sseutil)
-sse.t           = $(patsubst %.c,%_t, $(sse.c))
+sse_modules     = ssebmx ssebndm ssesort ssestr sseutil
+sse.c           = $(sse_modules:%=$(sse)/%.c)
+sse.t           = $(sse_modules:%=$(sse)/%_t)
 
-#---------------- PUBLIC VARS:
+#---------------- PUBLIC VARS (inputs to "make sse.install")
 sse.lib         = $(sse)/libsse.a
 sse.include     = $(sse)/sse.h
 
@@ -16,12 +17,11 @@ install         : sse.install
 
 #---------------- PRIVATE RULES:
 sse.all		: $(sse.lib)
-sse.test	: $(sse.t:%=%.pass)
+sse.test	: $(sse.t:=.pass)
 
 $(sse.lib)	: $(sse.c:c=o)
-$(sse)/ssebndm_t.pass : $(sse)/words
-# Note makefile order-dependence: this must precede "$(sse.t): $(sse.lib)"
 $(sse)/ssebmx_t	: $(sse)/bitmat.o
+$(sse)/ssebndm_t.pass : $(sse)/words
 
 $(sse.t)   	: CPPFLAGS += -I$(sse)
 $(sse.t)   	: $(sse.lib) $(sse)/tap.o
