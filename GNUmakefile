@@ -16,17 +16,23 @@ test            : sse.test
 install         : sse.install
 
 #---------------- PRIVATE RULES:
-sse.all		: $(sse.lib)
-sse.test	: $(sse.t:=.pass)
+<<<<<<< HEAD
+sse.all         : $(sse.lib)
+sse.test        : $(sse.t:=.pass)
 
-$(sse.lib)	: $(sse.c:c=o)
-$(sse)/ssebmx_t	: $(sse)/bitmat.o
+$(sse.lib)      : $(sse.c:c=o)
+=======
+sse.all         : $(sse.lib)
+sse.test        : $(sse.t:%=%.pass)
+
+$(sse.lib)      : $(sse.c:c=o)
+$(sse)/ssebmx_t : $(sse)/bitmat.o
 $(sse)/ssebndm_t.pass : $(sse)/words
 
-$(sse.t)   	: CPPFLAGS += -I$(sse)
-$(sse.t)   	: $(sse.lib) $(sse)/tap.o
+$(sse.t)        : CPPFLAGS += -I$(sse)
+$(sse.t)        : $(sse.lib) $(sse)/tap.o
 
-$(sse)/%.[Isi] 	: CPPFLAGS += -I$(sse)
+$(sse)/%.[Isi]  : CPPFLAGS += -I$(sse)
 
 # Include auto-generated depfiles (gcc -MMD):
 -include $(sse)/*.d
