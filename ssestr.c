@@ -38,9 +38,13 @@ ssestr(char const *tgt, char const *pat)
         return tgt;
     if (patlen == 1)
         return strchr(tgt, *pat);
-    while ((tgt = ssechr2(tgt, pat)) && memcmp(tgt + 2, pat + 2, patlen - 2))
-        ++tgt;
-    return tgt;
+    
+    char const *cp, *tp;
+    for (; (tgt = ssechr2(tgt, pat)); ++tgt)
+        for (cp = pat + 2, tp = tgt + 2;; ++cp, ++tp)
+            if (!*cp) return tgt; else if (*cp != *tp) break;
+    
+    return NULL;
 }
 
 char const *
