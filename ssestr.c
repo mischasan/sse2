@@ -28,44 +28,6 @@ ssecmp(char const *s, char const *t)
     m = xm_diff(xm_load(s), xm_loud(t)) & under(z);
     return m ? m = ffsl(m) - 1, s[m] - t[m] : 0;
 }
-// scanstr puts the memcmp(pat+2,*) INSIDE the loop.
-/// You can also use a loop that calls scanstr2 then memcmp(pat+2,*) outside the call.
-//XXX for patterns >32 bytes, you may be able to step forward by a
-// multiple of 16 bytes, instead of just "tgt += 16".
-char const*
-ssestr(char const* tgt, char const* pat)
-{
-    if (!pat[0]) return tgt;
-    if (!pat[1]) return strchr(tgt, *pat);
-    XMM zero = {}, xt;
-    XMM xp0 = xm_fill(pat[0]);
-    XMM xp1 = xm_fill(pat[1]);
-    unsigned m = 15 & (intptr_t)tgt, patlen = strlen(pat);
-    unsigned mz = (-1 << m) & xm_same(zero, xt = xm_load(tgt -= m));
-    unsigned m0 = (-1 << m) & xm_same(xp0, xt);
-    char const *p;
-    while (!mz) {
-        if (m0) {
-            unsigned m1 = xm_same(xp1, xt);
-            m0 &= (m1 >> 1) | (tgt[16] == pat[1] ? 0x8000 : 0);
-            for (m = m0; m; m &= m - 1) {
-                int pos = ffs(m) - 1;
-                if (!intcmp(pat+2, tgt+pos+2, patlen-2)) return tgt+pos;
-            }
-        }
-        mz = xm_same(zero, xt = xm_load(tgt += 16));
-        m0 = xm_same(xp0, xt);
-    }
-    if ((m0 &= under(mz))) {
-        m0 &= (xm_same(xp1, xt) >> 1);
-        for (m = m0; m; m &= m - 1) {
-            p = tgt + ffs(m) - 1;
-            if (!intcmp(pat+2, p+2, patlen-2))
-                return p;
-        }
-    }
-    return NULL;
-}
 
 char const *
 ssestr2(char const *tgt, char const *pat)
@@ -110,4 +72,46 @@ ssechr2(char const *tgt, char const pat[2])
             return tgt - 1;
         f = 0;
     }
+}
+
+// ssestr puts the memcmp(pat+2,*) INSIDE the loop.
+/// You can also use a loop that calls scanstr2 then memcmp(pat+2,*) outside the call.
+//XXX for patterns >32 bytes, you may be able to step forward by a
+// multiple of 16 bytes, instead of just "tgt += 16".
+char const*
+ssestr(char const* tgt, char const* pat)
+{
+    if (!pat[0]) return tgt;
+    if (!pat[1]) return strchr(tgt, *pat);
+    XMM zero = {}, xt;
+    XMM xp0 = xm_fill(pat[0]);
+    XMM xp1 = xm_fill(pat[1]);
+    unsigned m = 15 & (intptr_t)tgt, patlen = strlen(pat);
+    unsigned mz = (-1 << m) & xm_same(zero, xt = xm_load(tgt -= m));
+    unsigned m0 = (-1 << m) & xm_same(xp0, xt);
+    char const *p;
+
+    while (!mz) {
+        if (m0) {
+            unsigned m1 = xm_same(xp1, xt);
+            m0 &= (m1 >> 1) | (tgt[16] == pat[1] ? 0x8000 : 0);
+            for (m = m0; m; m &= m - 1) {
+                int pos = ffs(m) - 1;
+                if (!intcmp(pat+2, tgt+pos+2, patlen-2)) return tgt+pos;
+            }
+        }
+        mz = xm_same(zero, xt = xm_load(tgt += 16));
+        m0 = xm_same(xp0, xt);
+    }
+
+    if ((m0 &= under(mz))) {
+        m0 &= (xm_same(xp1, xt) >> 1);
+        for (m = m0; m; m &= m - 1) {
+            p = tgt + ffs(m) - 1;
+            if (!intcmp(pat+2, p+2, patlen-2))
+                return p;
+        }
+    }
+
+    return NULL;
 }
