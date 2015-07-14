@@ -1,10 +1,6 @@
+#include <plat.h>
+#include <msutil.h>
 #include "sse.h"
-#include <stdio.h>
-#include <string.h> // ffsl
-
-static inline int fls(int x) regargs;
-static inline int fls(int x)
-{ asm("bsrl %0,%0":"=r"(x):"r"(x)); return x; }
 
 #undef  DO
 #define DO_8x8(op,a) DO_8(op,a,0) DO_8(op,a,1) DO_8(op,a,2) DO_8(op,a,3) DO_8(op,a,4) DO_8(op,a,5) DO_8(op,a,6) DO_8(op,a,7)
@@ -38,8 +34,8 @@ xm_fls(XMM x)
 {
     int pos = xm_diff(x, xm_zero());
     if (!pos) return -1;
-    pos = fls(pos); // NOTE: FSL and FFSL map to bit pos #'s differently!
-    return (pos << 3) + fls(((unsigned char const*)&x)[pos]);
+    pos = fls(pos) - 1; // NOTE: FSL and FFSL map to bit pos #'s differently!
+    return (pos << 3) + fls(((unsigned char const*)&x)[pos]) - 1;
 }
 
 char*

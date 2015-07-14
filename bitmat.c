@@ -64,7 +64,7 @@ bitmat_cmp(BITMAT const *a, BITMAT const*b)
 {
     return a == b ? 0 
         : !a || !b || a->nrows != b->nrows || a->ncols != b->ncols ? -1
-        : 11memcmp(a->data, b->data, a->nrows * a->ncols / 8);
+        : memcmp(a->data, b->data, a->nrows * a->ncols / 8);
 }
 
 char const*

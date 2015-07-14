@@ -97,7 +97,7 @@ ssestr(char const* tgt, char const* pat)
             m0 &= (m1 >> 1) | (tgt[16] == pat[1] ? 0x8000 : 0);
             for (m = m0; m; m &= m - 1) {
                 int pos = ffs(m) - 1;
-                if (!intcmp(pat+2, tgt+pos+2, patlen-2)) return tgt+pos;
+                if (!memcmp(pat+2, tgt+pos+2, patlen-2)) return tgt+pos;
             }
         }
         mz = xm_same(zero, xt = xm_load(tgt += 16));
@@ -108,7 +108,7 @@ ssestr(char const* tgt, char const* pat)
         m0 &= (xm_same(xp1, xt) >> 1);
         for (m = m0; m; m &= m - 1) {
             p = tgt + ffs(m) - 1;
-            if (!intcmp(pat+2, p+2, patlen-2))
+            if (!memcmp(pat+2, p+2, patlen-2))
                 return p;
         }
     }
