@@ -75,7 +75,14 @@ ssesort16d(double keys[16])
     // Bitonic step #2:
     MINMAX(0, 3); MINMAX(1, 2); MINMAX(4, 7); MINMAX(5, 6);
     MINMAX(0, 1); MINMAX(2, 3); MINMAX(4, 5); MINMAX(6, 7);
-
+#   if XXX
+    // Blending steps 1 and 2 improves register use:
+    //TODO MINMAX_m uses _mm_loadu_pd; MINMAX_t uses temp[]
+    MINMAX_m(0, 1); MINMAX_m(2, 3);
+        MINMAX_t(0, 3); MINMAX_t(1, 2); MINMAX_t(0, 1); MINMAX_t(2, 3); 
+    MINMAX_m(4, 5); MINMAX_m(6, 7); 
+        MINMAX_t(4, 7); MINMAX_t(5, 6); MINMAX_t(4, 5); MINMAX_t(6, 7);
+#   endif //XXX
     // Bitonic step #3:
     MINMAX(0, 7); MINMAX(1, 6); MINMAX(2, 5); MINMAX(3, 4);
     MINMAX(0, 2); MINMAX(1, 3); MINMAX(4, 6); MINMAX(5, 7);
